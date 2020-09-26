@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 g.gcode
 DuetWebAPI.py
+g3.gcode

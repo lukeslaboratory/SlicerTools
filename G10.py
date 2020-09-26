@@ -78,53 +78,65 @@ def g10_swap(lines,delta_temp, end_phrase):
 	# Replace M104 with G10 Gcode
     linesNew = []
     tools_used = []
-    start_gcode_ended = False
+    start_gcode = True
     count=0
     default_tool = False
 
     for line in lines:
-        if line.startswith('M104'):
+        if line.startswith('M190'):
+            BedTemp=line
+
+        elif line.startswith('M104'):
             if str.find(line,"T") == -1: # Catch no-tool statements
                 tool = "0"
                 print("no tool found, using tool 0")
                 default_tool = True
             else: 
                 tool=line[(str.find(line,"T")+1)]
-            #tools_used.append(tool) #stores tools
+                print(str(tool))
+
             activetemp=line[(str.find(line,"S")+1):(str.find(line,"S")+4)]
-            print(type(activetemp))
-            #standbytemp=int(activetemp)-delta_temp
-            if isint(activetemp):
+
+            if isint(activetemp): #checks for 0 temp tools, activetemp will produce garbage if its not a 3digit number
                 standbytemp=int(activetemp)-delta_temp
                 linesNew.append(f"G10 P{tool} S{activetemp} R{standbytemp}" + "\n") #actual conversion
                 print(f"M104 converted over to G10 P{tool} S{activetemp} R{standbytemp}")
-            if start_gcode_ended==False: #activates tool to get it warmed up - for initial warmups
-                linesNew.append(f"T{tool} P0" + "\n")
                 count=count+1 #counts quantity of tools, used in removing m109's
 
-            
-        elif line.startswith("M109") and count>0 and start_gcode_ended==True:
+                if start_gcode: #activates tool to get it warmed up - for initial warmups
+                    #print(f'warming up T{tool}')
+                    linesNew.append(f"T{tool} P0" + "\n")
+
+        elif line.startswith("M109") and count>0 and start_gcode==True:
                 count = count-1
+                if count == 0:
+                    linesNew.append("T-1 P0\n")
+                    linesNew.append(f"{BedTemp}") #no /n since the line already has the newline
                 continue
+
         else:
             if end_phrase in line: # Check for end of start gcode
-                linesNew.append("T-1 P0" + "\n") #deactivates all tools w/out macros
                 if default_tool:
                   linesNew.append("T0"+ "\n")
-                start_gcode_ended = True
-
+                start_gcode_ended = False
             linesNew.append(line)
+
+
     return linesNew
 
 #main("foo.gcode", delta_temp, end_phrase) #testtesttest
 
 if __name__ == '__main__':
-    if sys.argv[1]:
+    if len(sys.argv)==2:
         fname = sys.argv[1]
+        main(fname, delta_temp, end_phrase)
+    elif len(sys.argv)==3:
+        fname = sys.argv[1]
+        delta_temp=int(sys.argv[2])
         main(fname, delta_temp, end_phrase)
     else:
         
-        print('Error: Proper Slic3r post processing command is python3')
+        print('Error: You need either just the file name or file name + delta-temp')
         error() 
 
 
