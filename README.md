@@ -3,10 +3,11 @@ Helpful tools for slicers
 
 Currently I use SuperSlicer and S3d - I'll try to merge all of my scripts per feature so that it supports either w/out having seperate scripts.
 
-Currently, Mesh+G10 are standalone.
+Currently, Meshtool+G10 are standalone.
 Upload.py requires DuetWebAPI which is in my different repo.
 
 What they are:
+
 Meshtool
   Updates the mesh coordinates to just cover the printed area. Useful for very large beds to get the most out of mesh resolution. Should work for S3D and PS/SS/Slic3r
 
