@@ -20,15 +20,13 @@ Credit:
 {1}
     Adapted from code originally posted by CCS86 on https://forum.duet3d.com/topic/15302/cura-script-to-automatically-probe-only-printed-area?_=1587348242875.
     This basically taught me how to accept files from slicers. 
-    Also, Huge credit to Danal (RIP) for his DuetWebAPI work which I expanded to make this work.
+    Also, Huge credit to Danal (RIP) for his DuetWebAPI work which I expanded to add some put files. 
 {1}
 """
 import sys
 import DuetWebAPI as DWA
 import os
 
- 
-probeSpacing = 20   		# set your required probe point spacing for M557
  
 def main(fname, IP):	
     print("uploading...")

@@ -130,3 +130,5 @@ dmypy.json
 g.gcode
 DuetWebAPI.py
 g3.gcode
+S3D.py
+S3D.py
